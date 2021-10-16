@@ -1,82 +1,77 @@
-export type Listener<T> = (value: T) => void
-
-export class EventEmitter<T> {
-  private listenerSet = new Set<Listener<T>>()
-  protected emit(event: T) {
-    this.listenerSet.forEach(f => f(event))
-  }
-  on(listener: Listener<T>) {
-    this.listenerSet.add(listener)
-  }
-  off(listener: Listener<T>) {
-    this.listenerSet.delete(listener)
-  }
+export type LifeCycle<T> = {
+  setup?: (value: T) => void
+  update?: (value: T, oldValue: T) => void
+  teardown?: (value: T) => void
 }
 
-export class DataContext<T> extends EventEmitter<T> {
-  constructor(protected _value: T) {
-    super()
-  }
-  getValue() {
-    return this._value
-  }
-  setValue(value: T) {
-    this._value = value
-    this.emit(value)
-  }
-  map<R>(fn: (value: T) => R): DataContext<R> {
-    let Class = this.constructor as any
-    let g: DataContext<R> = new Class(fn(this.getValue()))
-    this.on(x => g.setValue(fn(x)))
-    return g
-  }
-
-  reduce(fn: (acc: T, current: T) => T): DataContext<T> {
-    let Class = this.constructor as any
-    let g: DataContext<T> = new Class(this.getValue())
-    this.on(current => g.setValue(fn(g.getValue(), current)))
-    return g
-  }
+export type LiveContextOptions = {
+  // For debugging
+  name?: string
+  // Default false. If true, will disallow triggering update externally
+  passive?: boolean
 }
 
-export class ValueContext<T> extends DataContext<T> {
-  set value(value: T) {
-    if (value === this._value) {
-      return
-    }
-    super.setValue(value)
+export class LiveContext<T> {
+  static of<T>(value: T, name?: string) {
+    return new LiveContext(value, false, name)
   }
-}
 
-export type Lifecycle<T> = {
-  setup: (value: T) => void
-  update: (value: T, oldValue: T) => void
-  teardown: (value: T) => void
-}
-
-export class LifeContext<T> {
-  constructor(protected _value: T) {}
+  protected constructor(
+    protected _value: T,
+    passive: boolean,
+    public name?: string,
+  ) {
+    this.update = passive ? this.rejectUpdate : this.applyUpdate
+  }
 
   peek() {
     return this._value
   }
 
-  lifeCycleSet = new Set<Lifecycle<T>>()
+  private lifeCycleSet = new Set<LifeCycle<T>>()
 
-  attach(lifecycle: Lifecycle<T>) {
+  attach(lifecycle: LifeCycle<T>) {
     this.lifeCycleSet.add(lifecycle)
-    lifecycle.setup(this._value)
+    lifecycle.setup?.(this._value)
   }
 
-  update(value: T) {
-    let oldValue = this._value
+  update: (value: T) => void
+
+  protected applyUpdate(value: T) {
+    if (value === this._value) return
+    const oldValue = this._value
     this._value = value
     this.lifeCycleSet.forEach(lifecycle =>
-      lifecycle.update(this._value, oldValue),
+      lifecycle.update?.(this._value, oldValue),
     )
   }
 
+  protected rejectUpdate() {
+    let name = this.name || 'this'
+    console.error(`${name} is passive context, should not be updated`)
+    throw new Error('Cannot update passive context')
+  }
+
   teardown() {
-    this.lifeCycleSet.forEach(lifecycle => lifecycle.teardown(this._value))
+    this.lifeCycleSet.forEach(lifecycle => lifecycle.teardown?.(this._value))
+  }
+
+  map<R>(mapper: (value: T) => R, name?: string): LiveContext<R> {
+    const life = new LiveContext<R>(mapper(this._value), false, name)
+    const thisLifeCycle: LifeCycle<T> = {
+      update(value) {
+        life.update(mapper(value))
+      },
+      teardown() {
+        life.teardown()
+      },
+    }
+    this.lifeCycleSet.add(thisLifeCycle)
+    life.attach({
+      teardown: () => {
+        this.lifeCycleSet.delete(thisLifeCycle)
+      },
+    })
+    return life
   }
 }

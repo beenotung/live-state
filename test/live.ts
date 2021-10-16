@@ -1,6 +1,6 @@
-import { LifeContext } from '../src'
+import { LiveContext } from '../src'
 
-let life = new LifeContext('loading')
+let life = LiveContext.of('loading')
 
 life.attach({
   setup(value) {
@@ -14,6 +14,9 @@ life.attach({
   },
 })
 
-life.update('ready')
+life.update('1')
+life.update('2')
+life.update('2')
+life.update('3')
 
 life.teardown()
