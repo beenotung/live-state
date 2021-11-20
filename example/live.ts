@@ -1,6 +1,6 @@
 import { LiveContext } from '../src'
 
-let life = LiveContext.of('loading')
+const life = LiveContext.of('loading')
 
 life.attach({
   setup(value) {

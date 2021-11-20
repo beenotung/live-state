@@ -1,11 +1,11 @@
 import { LiveContext } from '../src'
 
-let life = LiveContext.of(0, 'life')
+const life = LiveContext.of(0, 'life')
 
-let life10 = life.map(x => x * 10, 'life10')
-let life100 = life10.map(x => x * 10, 'life100')
+const life10 = life.map(x => x * 10, 'life10')
+const life100 = life10.map(x => x * 10, 'life100')
 
-let monitor = (name: string) => {
+const monitor = (name: string) => {
   return {
     setup() {
       console.log('setup:', name)
