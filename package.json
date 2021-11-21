@@ -9,9 +9,9 @@
     "url": "https://beeno-tung.surge.sh"
   },
   "license": "BSD-2-Clause",
-  "main": "dist/cjs/index.js",
-  "types": "dist/cjs/index.d.ts",
-  "module": "dist/esm/index.js",
+  "main": "dist/cjs/context.js",
+  "types": "dist/cjs/context.d.ts",
+  "module": "dist/esm/context.js",
   "sideEffects": false,
   "scripts": {
     "prepare": "run-p prepare:*",
@@ -25,8 +25,7 @@
     "tsc": "run-p tsc:*",
     "tsc:cjs": "tsc -p tsconfig.cjs.json",
     "tsc:esm": "tsc -p tsconfig.esm.json",
-    "test": "run-s format tsc test:ts mocha",
-    "test:ts": "ts-node test/index.ts",
+    "test": "run-s format tsc mocha",
     "mocha": "ts-mocha \"{src,test}/**/*.spec.ts\"",
     "coverage": "nyc npm run mocha -- --reporter=progress",
     "report:update": "nyc --reporter=lcov npm run mocha -- --reporter=progress",
