@@ -14,17 +14,46 @@ export type LiveContextOptions = {
 export const Passive = true
 export const NotPassive = false
 
+export type ContextMode = boolean
+
+export type PassiveContext<T> = Omit<LiveContext<T>, 'update'>
+
 export class LiveContext<T> {
   static of<T>(value: T, name?: string) {
     return new LiveContext(value, NotPassive, name)
   }
 
+  static combine<A, B, R>(
+    aContext: PassiveContext<A>,
+    bContext: PassiveContext<B>,
+    combineFn: (a: A, b: B) => R,
+    name?: string,
+  ): PassiveContext<R> {
+    const cContext = new LiveContext<R>(
+      combineFn(aContext.peek(), bContext.peek()),
+      Passive,
+      name,
+    )
+    const aRemove = aContext.attach({
+      update: a => cContext.applyUpdate(combineFn(a, bContext.peek())),
+      teardown: () => cContext.teardown(),
+    })
+    const bRemove = bContext.attach({
+      update: b => cContext.applyUpdate(combineFn(aContext.peek(), b)),
+      teardown: () => cContext.teardown(),
+    })
+    cContext.attach({
+      teardown: () => (aRemove(), bRemove()),
+    })
+    return cContext
+  }
+
   protected constructor(
     protected _value: T,
-    passive: boolean,
+    mode: ContextMode,
     public name?: string,
   ) {
-    this.update = passive ? this.rejectUpdate : this.applyUpdate
+    this.update = mode == Passive ? this.rejectUpdate : this.applyUpdate
   }
 
   peek() {
@@ -36,6 +65,8 @@ export class LiveContext<T> {
   attach(lifecycle: LifeCycle<T>) {
     this.lifeCycleSet.add(lifecycle)
     lifecycle.setup?.(this._value)
+    const remove: () => void = () => this.lifeCycleSet.delete(lifecycle)
+    return remove
   }
 
   update: (value: T) => void
@@ -56,25 +87,22 @@ export class LiveContext<T> {
   }
 
   teardown() {
-    this.lifeCycleSet.forEach(lifecycle => lifecycle.teardown?.(this._value))
+    this.lifeCycleSet.forEach(
+      lifecycle => (
+        lifecycle.teardown?.(this._value), this.lifeCycleSet.delete(lifecycle)
+      ),
+    )
   }
 
-  map<R>(mapper: (value: T) => R, name?: string): LiveContext<R> {
-    const life = new LiveContext<R>(mapper(this._value), Passive, name)
-    const thisLifeCycle: LifeCycle<T> = {
-      update(value) {
-        life.applyUpdate(mapper(value))
-      },
-      teardown() {
-        life.teardown()
-      },
-    }
-    this.lifeCycleSet.add(thisLifeCycle)
-    life.attach({
-      teardown: () => {
-        this.lifeCycleSet.delete(thisLifeCycle)
-      },
+  map<R>(mapper: (value: T) => R, name?: string): PassiveContext<R> {
+    const other = new LiveContext<R>(mapper(this.peek()), Passive, name)
+    const remove = this.attach({
+      update: value => other.applyUpdate(mapper(value)),
+      teardown: () => other.teardown(),
     })
-    return life
+    other.attach({
+      teardown: remove,
+    })
+    return other
   }
 }
