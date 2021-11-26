@@ -23,6 +23,7 @@ export class LiveContext<T> {
     return new LiveContext(value, NotPassive, name)
   }
 
+  // TODO allow to update multiple context in batch (like transaction), to avoid this combined context do intermediate computation
   static combine<A, B, R>(
     aContext: PassiveContext<A>,
     bContext: PassiveContext<B>,
