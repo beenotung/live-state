@@ -1,0 +1,11 @@
+{
+  "name": "esm-example",
+  "type": "module",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "live-state.ts": "file:../.."
+  }
+}

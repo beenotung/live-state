@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "outDir": "dist"
+  },
+  "include": [
+    "src/state.ts"
+  ]
+}

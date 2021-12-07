@@ -1,0 +1,13 @@
+{
+  "name": "browser-example",
+  "scripts": {
+    "test": "http-server"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "live-state.ts": "file:../.."
+  },
+  "devDependencies": {
+    "http-server": "^14.0.0"
+  }
+}

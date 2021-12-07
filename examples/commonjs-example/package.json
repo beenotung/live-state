@@ -1,0 +1,14 @@
+{
+  "name": "example",
+  "scripts": {
+    "test": "ts-node index.ts"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "live-state.ts": "file:../.."
+  },
+  "devDependencies": {
+    "ts-node": "^10.4.0",
+    "typescript": "^4.4.4"
+  }
+}

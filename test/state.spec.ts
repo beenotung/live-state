@@ -1,63 +1,63 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import { LiveContext, LifeCycle, PassiveContext } from '../src/context'
+import { LiveState, LifeCycle, PassiveState } from '../src/state'
 
-describe('context.ts', () => {
-  context('LiveContext', () => {
+describe('state.ts', () => {
+  context('LiveState', () => {
     it('should get and set values', () => {
-      let context = LiveContext.of('v1')
-      expect(context.peek()).to.equals('v1')
-      context.update('v2')
-      expect(context.peek()).to.equals('v2')
+      let state = LiveState.of('v1')
+      expect(state.peek()).to.equals('v1')
+      state.update('v2')
+      expect(state.peek()).to.equals('v2')
     })
 
     it('should invoke setup lifecycle', () => {
-      let context = LiveContext.of('v1')
+      let state = LiveState.of('v1')
       let setup = sinon.fake()
-      context.attach({
+      state.attach({
         setup,
       })
       expect(setup.getCalls().length).to.equals(1)
     })
 
     it('should invoke teardown lifecycle', () => {
-      let context = LiveContext.of('v1')
+      let state = LiveState.of('v1')
       let teardown = sinon.fake()
-      context.attach({
+      state.attach({
         teardown,
       })
       expect(teardown.getCalls().length).to.equals(0)
-      context.teardown()
+      state.teardown()
       expect(teardown.getCalls().length).to.equals(1)
     })
 
     context('pushing live update', () => {
-      let context: LiveContext<string>
+      let state: LiveState<string>
       let update: sinon.SinonSpy
       let remove: () => void
       before(() => {
-        context = LiveContext.of('v1')
+        state = LiveState.of('v1')
         update = sinon.fake()
       })
       after(() => {
-        context.teardown()
+        state.teardown()
       })
       it('return remover function when attach lifecycle', () => {
-        remove = context.attach({ update })
+        remove = state.attach({ update })
         expect(remove).to.be.a('function')
       })
       it('should push live update when attached lifecycle', () => {
         expect(update.getCalls().length).to.equals(0)
-        context.update('v2')
+        state.update('v2')
         expect(update.getCalls().length).to.equals(1)
         expect(update.getCalls()[0].args).to.deep.equals(['v2', 'v1'])
       })
       it('should not push update when the new value is the same as old value', () => {
-        context.update('v2')
+        state.update('v2')
         expect(update.getCalls().length).to.equals(1)
       })
       it('should update when value is changed multiple times', () => {
-        context.update('v3')
+        state.update('v3')
         expect(update.getCalls().length).to.equals(2)
         expect(update.getCalls()[1].args).to.deep.equals(['v3', 'v2'])
       })
@@ -65,14 +65,14 @@ describe('context.ts', () => {
         remove()
       })
       it('should not push live update after remove lifecycle', () => {
-        context.update('v3')
+        state.update('v3')
         expect(update.getCalls().length).to.equals(2)
       })
     })
 
     context('context.map', () => {
       it('should push life cycle down the chain', () => {
-        let context1 = LiveContext.of(1)
+        let context1 = LiveState.of(1)
         let context2 = context1.map(x => x + 10)
 
         expect(context1.peek()).to.equals(1)
@@ -89,31 +89,31 @@ describe('context.ts', () => {
         expect(teardown.getCalls().length).to.equals(1)
       })
 
-      it('should throw error when directly update mapped context', () => {
-        let context1 = LiveContext.of(1)
-        let context2 = context1.map(x => x + 10)
+      it('should throw error when directly update mapped state', () => {
+        let state1 = LiveState.of(1)
+        let state2 = state1.map(x => x + 10)
 
         let errorMock = mockConsoleError()
-        expect(() => (context2 as LiveContext<any>).update(2)).to.throw(
-          'Cannot update passive context',
+        expect(() => (state2 as LiveState<any>).update(2)).to.throw(
+          'Cannot update passive state',
         )
         expect(errorMock.spy.getCalls().length).to.equals(1)
         errorMock.restore()
 
-        context1.teardown()
+        state1.teardown()
       })
     })
 
-    context('LiveContext.combine', () => {
-      let a: LiveContext<string>
-      let b: LiveContext<string>
-      let c: PassiveContext<[string, string]>
+    context('LiveState.combine', () => {
+      let a: LiveState<string>
+      let b: LiveState<string>
+      let c: PassiveState<[string, string]>
       before(() => {
-        a = LiveContext.of('a')
-        b = LiveContext.of('b')
+        a = LiveState.of('a')
+        b = LiveState.of('b')
       })
-      it('should combine context with initial value', () => {
-        c = LiveContext.combine(a, b, (a, b) => [a, b], '[a, b]')
+      it('should combine state with initial value', () => {
+        c = LiveState.combine(a, b, (a, b) => [a, b], '[a, b]')
         expect(c.peek()).to.deep.equals(['a', 'b'])
       })
       it('should push update from upstream', () => {
@@ -130,8 +130,8 @@ describe('context.ts', () => {
       })
       it('should not allow update combined value from external', () => {
         let errorMock = mockConsoleError()
-        expect(() => (c as LiveContext<any>).update('c')).to.throw(
-          'Cannot update passive context',
+        expect(() => (c as LiveState<any>).update('c')).to.throw(
+          'Cannot update passive state',
         )
         expect(errorMock.spy.getCalls().length).to.equals(1)
         errorMock.restore()

@@ -1,6 +1,6 @@
-import { LiveContext } from '../src'
+import { LiveState } from 'live-state.ts'
 
-const life = LiveContext.of(0, 'life')
+const life = LiveState.of(0, 'life')
 
 const life10 = life.map(x => x * 10, 'life10')
 const life100 = life10.map(x => x * 10, 'life100')

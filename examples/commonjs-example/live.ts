@@ -1,6 +1,6 @@
-import { LiveContext } from '../src'
+import { LiveState } from 'live-state.ts'
 
-const life = LiveContext.of('loading')
+const life = LiveState.of('loading')
 
 life.attach({
   setup(value) {

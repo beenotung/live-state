@@ -12,7 +12,6 @@ It is inspired from [s.js](https://github.com/?/s-js) and [rxjs](https://github.
 
 - Live Context with realtime update automatically pushed to attached lifecycle hooks
 - Skip unnecessary computation
-- Cached Compute (memorized function with update callback)
 
 ## Feature
 
