@@ -136,6 +136,29 @@ describe('state.ts', () => {
         expect(errorMock.spy.getCalls().length).to.equals(1)
         errorMock.restore()
       })
+      context('teardown source state of combined state', () => {
+        let teardown: sinon.SinonSpy
+        beforeEach(() => {
+          a = LiveState.of('a')
+          b = LiveState.of('a')
+          c = LiveState.combine(a, b, (a, b) => [a, b], '[a, b]')
+          teardown = sinon.fake()
+          c.attach({ teardown })
+        })
+        it('when first source state is teardown', () => {
+          a.teardown()
+          expect(teardown.getCalls().length).to.equals(1)
+        })
+        it('when second source state is teardown', () => {
+          b.teardown()
+          expect(teardown.getCalls().length).to.equals(1)
+        })
+        it('when both source states are teardown', () => {
+          a.teardown()
+          b.teardown()
+          expect(teardown.getCalls().length).to.equals(1)
+        })
+      })
     })
   })
 })
