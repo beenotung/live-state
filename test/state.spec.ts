@@ -31,6 +31,12 @@ describe('state.ts', () => {
       expect(teardown.getCalls().length).to.equals(1)
     })
 
+    it('should not throw error when attached empty lifecycle', () => {
+      let state = LiveState.of(1)
+      state.attach({})
+      state.teardown()
+    })
+
     context('pushing live update', () => {
       let state: LiveState<string>
       let update: sinon.SinonSpy
@@ -71,24 +77,34 @@ describe('state.ts', () => {
     })
 
     context('context.map', () => {
-      it('should push life cycle down the chain', () => {
-        let context1 = LiveState.of(1)
-        let context2 = context1.map(x => x + 10)
+      context('push lifecycle down the chain', () => {
+        let context1: LiveState<number>
+        let context2: PassiveState<number>
+        beforeEach(() => {
+          context1 = LiveState.of(1)
+          context2 = context1.map(x => x + 10)
+        })
+        afterEach(() => {
+          context2.teardown()
+          context1.teardown()
+        })
+        it('should trigger setup hook', () => {
+          expect(context1.peek()).to.equals(1)
+          expect(context2.peek()).to.equals(11)
+        })
+        it('should trigger update lifecycle', () => {
+          context1.update(2)
+          expect(context1.peek()).to.equals(2)
+          expect(context2.peek()).to.equals(12)
+        })
+        it('should trigger teardown lifecycle', () => {
+          let teardown = sinon.fake()
+          context2.attach({ teardown })
+          context1.teardown()
 
-        expect(context1.peek()).to.equals(1)
-        expect(context2.peek()).to.equals(11)
-
-        context1.update(2)
-        expect(context1.peek()).to.equals(2)
-        expect(context2.peek()).to.equals(12)
-
-        let teardown = sinon.fake()
-        context2.attach({ teardown })
-        context1.teardown()
-
-        expect(teardown.getCalls().length).to.equals(1)
+          expect(teardown.getCalls().length).to.equals(1)
+        })
       })
-
       it('should throw error when directly update mapped state', () => {
         let state1 = LiveState.of(1)
         let state2 = state1.map(x => x + 10)
