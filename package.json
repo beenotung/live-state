@@ -1,6 +1,6 @@
 {
   "name": "live-state.ts",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Create composable and reactive state that propagate updates down the stream without unnecessary computation",
   "keywords": [
     "state",
