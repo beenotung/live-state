@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>live-state.ts CDN Demo (iife)</title>
+  </head>
+
+  <body>
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/live-state.ts@0.1.0/dist/browser.js"
+    ></script>
+    <main>Loading...</main>
+    <script>
+      window.addEventListener('load', () => {
+        let state = LiveState.of(1)
+        if (state.peek() == 1) {
+          document.querySelector('main').textContent =
+            'live-state.ts works in browser'
+        }
+      })
+    </script>
+  </body>
+</html>

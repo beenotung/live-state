@@ -4,23 +4,15 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>live-state.ts Demo</title>
   </head>
 
   <body>
-    <script
-      type="module"
-      src="node_modules/live-state.ts/dist/browser.js"
-    ></script>
-    <main>Loading...</main>
     <script>
-      window.addEventListener('load', () => {
-        let state = LiveState.of(1)
-        if (state.peek() == 1) {
-          document.querySelector('main').textContent =
-            'live-state.ts works in browser'
-        }
-      })
+      for (let name of ['local-iife', 'local-esm', 'cdn-iife', 'cdn-esm']) {
+        let href = name + '.html'
+        document.write('<p><a href="' + href + '">' + href + '</a></p>')
+      }
     </script>
   </body>
 </html>
