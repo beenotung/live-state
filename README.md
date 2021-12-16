@@ -6,7 +6,7 @@ Create composable and reactive state that propagate updates down the stream with
 
 This library helps to maintain consistent state in realtime applications.
 
-It is inspired from [s.js](https://github.com/?/s-js) and [rxjs](https://github.com/reactive-x/rxjs), and aim to keep it simple.
+It is inspired from [s.js](https://github.com/adamhaile/s-js) and [rxjs](https://github.com/reactive-x/rxjs), and aim to keep it simple.
 
 ## Main Features
 
