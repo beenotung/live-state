@@ -21,8 +21,6 @@
   "module": "dist/esm.js",
   "sideEffects": false,
   "scripts": {
-    "prepare": "run-p prepare:*",
-    "prepare:husky": "husky install",
     "clean": "rimraf dist",
     "format": "run-s format:*",
     "format:prettier": "prettier --write .",
@@ -59,7 +57,6 @@
     "esbuild-node-externals": "^1.4.0",
     "eslint": "^7.32.0",
     "format-json-cli": "^1.0.1",
-    "husky": "^7.0.2",
     "minify": "^8.0.3",
     "mocha": "8",
     "node-preload": "^0.2.1",
