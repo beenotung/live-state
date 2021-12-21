@@ -10,7 +10,7 @@ It is inspired from [s.js](https://github.com/adamhaile/s-js) and [rxjs](https:/
 
 ## Main Features
 
-- Live Context with realtime update automatically pushed to attached lifecycle hooks
+- Live State with realtime updates automatically pushed to attached lifecycle hooks
 - Skip unnecessary computation
 
 ## Feature
