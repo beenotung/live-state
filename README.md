@@ -8,15 +8,79 @@ This library helps to maintain consistent state in realtime applications.
 
 It is inspired from [s.js](https://github.com/adamhaile/s-js) and [rxjs](https://github.com/reactive-x/rxjs), and aims to keep simple.
 
-## Main Features
+## Features
 
 - Live State with realtime updates automatically pushed to attached lifecycle hooks
 - Skip unnecessary computation
-
-## Feature
-
 - Built-in Typescript support
 - 100% tested with ts-mocha
+
+## Usage Examples
+
+### Importing the library
+
+#### Import npm package
+
+```typescript
+import { LiveState } from 'live-state.ts'
+```
+
+#### Import esm package over CDN
+
+```html
+<script type="module">
+  import { LiveState } from 'https://cdn.jsdelivr.net/npm/live-state.ts@0.1.0/dist/esm.js'
+  let state = LiveState.of(1)
+</script>
+```
+
+#### Import iife library over CDN
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/live-state.ts@0.1.0/dist/browser.js"></script>
+<script>
+  let state = LiveState.of(1)
+</script>
+```
+
+### Lifecycle Hook Example
+
+```typescript
+let state = LiveState.of(1)
+state.attach({
+  setup(value) {
+    console.log('initial value:', value)
+  },
+  update(value, oldValue) {
+    console.log('update:', { value, oldValue })
+  },
+  teardown(value) {
+    console.log('last value:', value)
+  },
+})
+// print initial value: 1
+state.update(2)
+// print update: { value: 2, oldValue: 1 }
+state.update(3)
+// print update: { value: 3, oldValue: 2 }
+state.teardown()
+// print last value: 3
+```
+
+### Derived State Example
+
+```typescript
+let state = LiveState.of(10)
+let doubleState = state.map(x => x * 2)
+let tupleState = LiveState.combine(state, doubleState, (a, b) => [a, b])
+
+console.log(tupleState.peek())
+// print [10, 20]
+
+state.update(15)
+console.log(state2.peek())
+// print [15, 30]
+```
 
 ## License
 
