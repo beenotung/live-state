@@ -21,8 +21,27 @@ It is inspired from [s.js](https://github.com/adamhaile/s-js) and [rxjs](https:/
 
 #### Import npm package
 
+Install from npm:
+
+```bash
+# install with npm
+npm i live-state.ts
+# or pnpm
+pnpm i live-state.ts
+# or yarn
+yarn add live-state.ts
+```
+
+Import as typescript package / esm package:
+
 ```typescript
 import { LiveState } from 'live-state.ts'
+```
+
+Import as commonjs package
+
+```javascript
+let { LiveState } = require('live-state.ts')
 ```
 
 #### Import esm package over CDN
