@@ -101,6 +101,12 @@ console.log(state2.peek())
 // print [15, 30]
 ```
 
+More usage examples refer to:
+- [browser-example](./examples/browser-example)
+- [commonjs-example](./examples/commonjs-example)
+- [esm-example](./examples/esm-example)
+- [state.spec.ts](./test/state.spec.ts)
+
 ## License
 
 This project is licensed with [BSD-2-Clause](./LICENSE)
