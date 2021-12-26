@@ -41,8 +41,8 @@
   "files": [
     "src",
     "test",
-    "example/package.json",
-    "example/*.ts",
+    "examples/*/*.{html,ts}",
+    "examples/*/package.json",
     "dist"
   ],
   "devDependencies": {
