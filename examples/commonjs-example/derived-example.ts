@@ -1,4 +1,4 @@
-import { LiveState } from 'live-state.ts';
+import { LiveState } from 'live-state.ts'
 
 let state = LiveState.of(10)
 let doubleState = state.map(x => x * 2)

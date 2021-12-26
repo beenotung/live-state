@@ -102,6 +102,7 @@ console.log(state2.peek())
 ```
 
 More usage examples refer to:
+
 - [browser-example](./examples/browser-example)
 - [commonjs-example](./examples/commonjs-example)
 - [esm-example](./examples/esm-example)
