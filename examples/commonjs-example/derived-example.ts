@@ -9,3 +9,4 @@ console.log(tupleState.peek())
 
 state.update(15)
 console.log(tupleState.peek())
+// print [15, 30]
