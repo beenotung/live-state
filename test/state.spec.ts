@@ -76,31 +76,31 @@ describe('state.ts', () => {
       })
     })
 
-    context('context.map', () => {
+    context('state.map', () => {
       context('push lifecycle down the chain', () => {
-        let context1: LiveState<number>
-        let context2: PassiveState<number>
+        let state1: LiveState<number>
+        let state2: PassiveState<number>
         beforeEach(() => {
-          context1 = LiveState.of(1)
-          context2 = context1.map(x => x + 10)
+          state1 = LiveState.of(1)
+          state2 = state1.map(x => x + 10)
         })
         afterEach(() => {
-          context2.teardown()
-          context1.teardown()
+          state2.teardown()
+          state1.teardown()
         })
         it('should trigger setup hook', () => {
-          expect(context1.peek()).to.equals(1)
-          expect(context2.peek()).to.equals(11)
+          expect(state1.peek()).to.equals(1)
+          expect(state2.peek()).to.equals(11)
         })
         it('should trigger update lifecycle', () => {
-          context1.update(2)
-          expect(context1.peek()).to.equals(2)
-          expect(context2.peek()).to.equals(12)
+          state1.update(2)
+          expect(state1.peek()).to.equals(2)
+          expect(state2.peek()).to.equals(12)
         })
         it('should trigger teardown lifecycle', () => {
           let teardown = sinon.fake()
-          context2.attach({ teardown })
-          context1.teardown()
+          state2.attach({ teardown })
+          state1.teardown()
 
           expect(teardown.getCalls().length).to.equals(1)
         })
