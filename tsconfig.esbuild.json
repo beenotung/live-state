@@ -7,7 +7,7 @@
     "declaration": true,
     "outDir": "dist"
   },
-  "include": [
+  "files": [
     "src/state.ts"
   ]
 }
