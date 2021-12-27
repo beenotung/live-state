@@ -101,4 +101,13 @@ export class LiveState<T> {
     })
     return other
   }
+
+  watch(fn: (value: T) => void) {
+    fn(this._value)
+    const detach = this.attach({
+      update: value => fn(value),
+      teardown: () => detach(),
+    })
+    return detach
+  }
 }

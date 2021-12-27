@@ -88,6 +88,10 @@ state.teardown()
 
 ### Derived State Example
 
+The `state.map(fn)` takes a projection function and derives a new state.
+
+When the current state is teardown, the derived state will also be teardown.
+
 ```typescript
 let state = LiveState.of(10)
 let doubleState = state.map(x => x * 2)
@@ -99,6 +103,28 @@ console.log(tupleState.peek())
 state.update(15)
 console.log(state2.peek())
 // print [15, 30]
+```
+
+### Watching State Example
+
+Similar to the `state.map(fn)` method, the `state.watch(fn)` method will push the current state and future updates to the callback function.
+
+However, this method does not derive a new state. You can use this method with less overhead when the return value of the callback function is not useful.
+
+The concept of 'watch' is also called as 'observe', 'subscribe', or 'forEach' in other libraries.
+
+```typescript
+let state = LiveState.of(10)
+
+let detach = state.watch(value => console.log(value))
+// print 10
+
+state.update(20)
+// print 20
+
+detach()
+state.update(30)
+// won't print 30
 ```
 
 More usage examples refer to:

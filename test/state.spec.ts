@@ -120,6 +120,56 @@ describe('state.ts', () => {
       })
     })
 
+    context('state.watch', () => {
+      it('should watch for changes', () => {
+        let state = LiveState.of('v1')
+        let callback = sinon.fake()
+
+        state.watch(callback)
+        expect(callback.getCalls().length).to.equals(1)
+        expect(callback.getCalls()[0].args).to.deep.equals(['v1'])
+
+        state.update('v2')
+        expect(callback.getCalls().length).to.equals(2)
+        expect(callback.getCalls()[1].args).to.deep.equals(['v2'])
+      })
+      it('should not receive callback after detach watcher', () => {
+        let state = LiveState.of('v1')
+        let callback = sinon.fake()
+
+        let detach = state.watch(callback)
+        expect(callback.getCalls().length).to.equals(1)
+
+        detach()
+        state.update('v2')
+        expect(callback.getCalls().length).to.equals(1)
+      })
+      it('should auto remove watcher after teardown', () => {
+        let state = LiveState.of('v1')
+        let callback = sinon.fake()
+
+        state.watch(callback)
+        expect(callback.getCalls().length).to.equals(1)
+
+        state.teardown()
+        state.update('v2')
+        expect(callback.getCalls().length).to.equals(1)
+      })
+      it('should be able to watch derived state update', () => {
+        let state1 = LiveState.of('v1')
+        let state2 = state1.map(value => [value, value])
+        let callback = sinon.fake()
+
+        state2.watch(callback)
+        expect(callback.getCalls().length).to.equals(1)
+        expect(callback.getCalls()[0].args).to.deep.equals([['v1', 'v1']])
+
+        state1.update('v2')
+        expect(callback.getCalls().length).to.equals(2)
+        expect(callback.getCalls()[1].args).to.deep.equals([['v2', 'v2']])
+      })
+    })
+
     context('LiveState.combine', () => {
       let a: LiveState<string>
       let b: LiveState<string>
