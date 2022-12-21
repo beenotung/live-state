@@ -48,7 +48,7 @@ let { LiveState } = require('live-state.ts')
 
 ```html
 <script type="module">
-  import { LiveState } from 'https://cdn.jsdelivr.net/npm/live-state.ts@1.0.0/dist/esm.js'
+  import { LiveState } from 'https://cdn.jsdelivr.net/npm/live-state.ts@1.1.0/dist/esm.js'
   let state = LiveState.of(1)
 </script>
 ```
@@ -56,7 +56,7 @@ let { LiveState } = require('live-state.ts')
 #### Import iife library over CDN
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/live-state.ts@1.0.0/dist/browser.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/live-state.ts@1.1.0/dist/browser.js"></script>
 <script>
   let state = LiveState.of(1)
 </script>
