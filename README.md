@@ -105,6 +105,8 @@ console.log(tupleState.peek())
 // print [15, 30]
 ```
 
+Tips: You can attach lifecycle hooks to derived state as well.
+
 ### Watching State Example
 
 Similar to the `state.map(fn)` method, the `state.watch(fn)` method will push the current state and future updates to the callback function.
