@@ -101,7 +101,7 @@ console.log(tupleState.peek())
 // print [10, 20]
 
 state.update(15)
-console.log(state2.peek())
+console.log(tupleState.peek())
 // print [15, 30]
 ```
 
